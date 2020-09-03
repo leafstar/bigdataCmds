@@ -86,5 +86,29 @@ sql("SELECT * FROM src").show()
 ```
 # Spark read Hbase
     
+```
+def catalog = s"""{
+    |"table":{"namespace":"default", "name":"Contacts"},
+    |"rowkey":"key",
+    |"columns":{
+    |"rowkey":{"cf":"rowkey", "col":"key", "type":"string"},
+    |"officeAddress":{"cf":"Office", "col":"Address", "type":"string"},
+    |"officePhone":{"cf":"Office", "col":"Phone", "type":"string"},
+    |"personalName":{"cf":"Personal", "col":"Name", "type":"string"},
+    |"personalPhone":{"cf":"Personal", "col":"Phone", "type":"string"}
+    |}
+|}""".stripMargin
 
-  
+```
+# 11
+
+```
+def withCatalog(cat: String): DataFrame = {
+    spark.sqlContext
+    .read
+    .options(Map(HBaseTableCatalog.tableCatalog->cat))
+    .format("org.apache.spark.sql.execution.datasources.hbase")
+    .load()
+ }
+
+```
