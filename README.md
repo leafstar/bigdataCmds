@@ -119,3 +119,38 @@ def withCatalog(cat: String): DataFrame = {
 + orc
 + parquet
 + text
+
+# 连接jdbc数据库　
++ 读数据
+```
+val jdbcDF = spark.read.format("jdbc")
+	.option("url","jdbc:mysql://localhost:3306/spark")
+	.option("driver","com.mysql.jdbc.Driver")
+	.option("dtable", "student")
+	.option("user", "root")
+	.option("password", "....")
+	.load()
+jdbcDF.show()
+```
+
++ 写数据
+```
+import java.util.Properties
+import org.apache.spark.sql.types._
+import org.apache.spark.sql.Row
+
+val studentRDD = spark.sparkContext.parallelize(Array("3 LEO M 26","4 LEO2 M 27")).map(._split(" "))
+val schema = StructType(list(StructField("id", IntegerType, true),StructField("NAME", StringType, true),StructField("gender",Stringtype,true),StructField("age",IntegerType,true)))
+
+val RowRDD = studentRDD.map(p=> Row(p(0).trim.toInt,p(1).trim,p(2).trim,p(3).trim.toInt))
+val studentDF = spark.createDataFrame(rowRDD,schema)
+
+//保存jdbc连接参数
+val prop = new Properties()
+prop.put("user","root")
+prop.put("password","xxx")
+prop.put("driver","com.mysql.jdbc.Driver")
+
+//连接数据库，采用append模式
+studentDF.write.mode("append").jdbc("jdbc:mysql://localhost:3306/spark","spark.student", prop)
+```
