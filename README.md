@@ -112,3 +112,10 @@ def withCatalog(cat: String): DataFrame = {
  }
 
 ```
+# sparkSession.read()返回一个dataFrameReader class
++ csv
++ jdbc
++ json
++ orc
++ parquet
++ text
